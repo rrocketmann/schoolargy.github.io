@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schoology
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #0770b8;
+    --blue-light: #e8f3fb;
+    --blue-dark: #055a96;
+    --teal: #1a8a6e;
+    --orange: #e07b2a;
+    --red: #c0392b;
+    --gray-bg: #f5f5f5;
+    --gray-border: #ddd;
+    --gray-text: #666;
+    --sidebar-bg: #fff;
+    --white: #fff;
+    --nav-height: 56px;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--gray-bg);
+    color: #333;
+    font-size: 13px;
+  }
+
+  /* TOP NAV */
+  .topnav {
+    height: var(--nav-height);
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 20px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--blue);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    line-height: 1.1;
+  }
+
+  .logo-text .school-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .logo-text .school-level {
+    font-size: 11px;
+    color: var(--gray-text);
+  }
+
+  .nav-links {
+    display: flex;
+    height: 100%;
+    list-style: none;
+    gap: 0;
+  }
+
+  .nav-links li a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 14px;
+    height: var(--nav-height);
+    text-decoration: none;
+    color: #444;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .nav-links li a:hover,
+  .nav-links li a.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+
+  .nav-links li a .caret {
+    font-size: 9px;
+    opacity: 0.6;
+  }
+
+  .nav-spacer { flex: 1; }
+
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-icon-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 16px;
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .nav-icon-btn:hover { background: var(--gray-bg); }
+
+  .badge {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    background: var(--blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 4px;
+    overflow: hidden;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .schoolargy-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: -0.5px;
+    margin-right: 16px;
+    font-style: italic;
+  }
+
+  .user-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  /* SUB-TABS */
+  .sub-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    padding: 0 20px;
+  }
+
+  .sub-tab {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-text);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 11.5px;
+  }
+
+  .sub-tab.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+
+  .sub-tab:hover { color: var(--blue); }
+
+  /* MAIN LAYOUT */
+  .main-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 20px 16px;
+    align-items: flex-start;
+  }
+
+  /* FEED COLUMN */
+  .feed-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* POST FILTER BAR */
+  .post-filter {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 10px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .post-filter label { font-weight: 500; }
+
+  .post-filter select {
+    border: 1px solid var(--gray-border);
+    background: var(--white);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+  }
+
+  .filter-sort {
+    margin-left: auto;
+    color: var(--blue);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* FEED CARD */
+  .feed-card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .poster-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #bbb;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    font-weight: 600;
+  }
+
+  .poster-avatar.green { background: var(--teal); }
+  .poster-avatar.blue { background: var(--blue); }
+  .poster-avatar.orange { background: var(--orange); }
+
+  .poster-info {
+    flex: 1;
+  }
+
+  .poster-name {
+    color: var(--blue);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .poster-name:hover { text-decoration: underline; }
+
+  .poster-route {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--gray-text);
+    margin-top: 1px;
+  }
+
+  .poster-route .arrow { color: #aaa; }
+
+  .poster-route .course-link {
+    color: var(--blue);
+    cursor: pointer;
+  }
+
+  .poster-route .course-link:hover { text-decoration: underline; }
+
+  .card-action {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 16px;
+  }
+
+  .card-action:hover { background: var(--gray-bg); color: #666; }
+
+  .card-body {
+    padding: 4px 14px 14px;
+  }
+
+  .card-message {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c5282;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    line-height: 1.5;
+    padding: 6px 0 12px;
+  }
+
+  .card-image {
+    width: 100%;
+    max-width: 380px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+    background: #e8e8e8;
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .card-image-placeholder {
+    width: 100%;
+    max-width: 380px;
+    height: 220px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    border-radius: 4px;
+    font-size: 42px;
+    border: 1px solid #c8e6c9;
+  }
+
+  .card-footer {
+    padding: 8px 14px;
+    border-top: 1px solid var(--gray-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .show-more {
+    font-size: 12px;
+    color: var(--gray-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .show-more:hover { color: var(--blue); }
+
+  .timestamp {
+    font-size: 12px;
+    color: var(--gray-text);
+  }
+
+  .like-btn {
+    font-size: 12px;
+    color: var(--blue);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 0;
+  }
+
+  .like-btn:hover { text-decoration: underline; }
+
+  .likes-row {
+    padding: 6px 14px 10px;
+    font-size: 12px;
+    color: var(--gray-text);
+    border-top: 1px solid var(--gray-bg);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .emoji { font-size: 14px; }
+
+  .likes-row .names { color: var(--blue); cursor: pointer; }
+  .likes-row .names:hover { text-decoration: underline; }
+
+  /* SECOND CARD - assignment style */
+  .assignment-card .card-message {
+    text-align: left;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    color: #333;
+    padding: 0;
+  }
+
+  .assignment-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff3e0;
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .assignment-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+
+  .assignment-title:hover { text-decoration: underline; }
+
+  .assignment-desc {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .sidebar-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--gray-bg);
+    letter-spacing: 0.01em;
+  }
+
+  .todo-group-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-text);
+    padding: 8px 14px 4px;
+    background: #fafafa;
+    border-bottom: 1px solid var(--gray-bg);
+  }
+
+  .todo-group-label.overdue {
+    color: var(--red);
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 9px 14px;
+    gap: 10px;
+    border-bottom: 1px solid var(--gray-bg);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .todo-item:hover { background: var(--blue-light); }
+  .todo-item:last-child { border-bottom: none; }
+
+  .todo-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: white;
+    font-weight: 700;
+  }
+
+  .todo-icon.green { background: var(--teal); }
+  .todo-icon.blue { background: var(--blue); }
+  .todo-icon.purple { background: #7b5ea7; }
+
+  .todo-content { flex: 1; min-width: 0; }
+
+  .todo-title {
+    font-size: 12.5px;
+    color: var(--blue);
+    font-weight: 500;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .todo-title:hover { text-decoration: underline; }
+
+  .todo-due {
+    font-size: 11px;
+    color: var(--gray-text);
+  }
+
+  .todo-course {
+    font-size: 11px;
+    color: #888;
+    margin-top: 1px;
+  }
+
+  .todo-status {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .status-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  .status-icon.overdue {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  .status-icon.upcoming {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* EVENTS */
+  .event-date-header {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-text);
+    padding: 8px 14px 4px;
+    background: #fafafa;
+    border-bottom: 1px solid var(--gray-bg);
+  }
+
+  .event-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 14px;
+    gap: 10px;
+    border-bottom: 1px solid var(--gray-bg);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .event-item:hover { background: var(--blue-light); }
+
+  .event-icon {
+    width: 22px;
+    height: 22px;
+    background: var(--blue);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .event-title {
+    font-size: 12.5px;
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    padding: 8px 14px;
+    text-align: right;
+  }
+
+  .calendar-link {
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .calendar-link:hover { text-decoration: underline; }
+
+  /* SIDEBAR CARD HEADER WITH LINK */
+  .sidebar-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--gray-bg);
+  }
+
+  .sidebar-card-header .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+  }
+
+  .sidebar-card-header .link {
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+  }
+
+  .sidebar-card-header .link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="nav-logo" href="#">
+    <div class="logo-icon">JLS</div>
+    <div class="logo-text">
+      <div class="school-name">Jane Lathrop Stanford</div>
+      <div class="school-level">Middle School</div>
+    </div>
+  </a>
+  <span class="schoolargy-brand">schoolargy</span>
+
+  <ul class="nav-links">
+    <li><a href="#" class="active">Courses <span class="caret">▼</span></a></li>
+    <li><a href="#">Groups <span class="caret">▼</span></a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">Grades <span class="caret">▼</span></a></li>
+  </ul>
+
+  <div class="nav-spacer"></div>
+
+  <div class="nav-icons">
+    <button class="nav-icon-btn" title="Search">🔍</button>
+    <button class="nav-icon-btn" title="Dashboard">⊞</button>
+    <button class="nav-icon-btn" title="Calendar">📅</button>
+    <button class="nav-icon-btn" title="Messages">✉️</button>
+    <button class="nav-icon-btn" title="Notifications">
+      🔔
+      <span class="badge"></span>
+    </button>
+    <div class="avatar">MM</div>
+    <span class="user-name">Martin M.</span>
+  </div>
+</nav>
+
+<!-- SUB TABS -->
+<div class="sub-tabs">
+  <div class="sub-tab active">Recent Activity</div>
+  <div class="sub-tab">Course Dashboard</div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- FEED -->
+  <div class="feed-col">
+
+    <!-- Filter Bar -->
+    <div class="post-filter">
+      <label>Post:</label>
+      <select>
+        <option>📅 Event</option>
+        <option>📢 Announcement</option>
+        <option>📝 Assignment</option>
+      </select>
+      <div class="filter-sort">Most Recent ▾</div>
+    </div>
+
+    <!-- Announcement Card -->
+    <div class="feed-card">
+      <div class="card-header">
+        <div class="poster-avatar green">MA</div>
+        <div class="poster-info">
+          <div class="poster-name">Sarah Holloway</div>
+          <div class="poster-route">
+            <span class="arrow">▶</span>
+            <span class="course-link">JLS Library: 2025–2026 (All Students)</span>
+          </div>
+        </div>
+        <button class="card-action">⧉</button>
+      </div>
+      <div class="card-body">
+        <div class="card-message">
+          Found a special bookmark tucked inside your borrowed book? Write your name on it and bring it to the front desk — you could win this month's grand prize!
+        </div>
+        <div class="card-image-placeholder">📚🍀</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="show-more">▼ Show More</span>
+          <span class="timestamp">Today at 3:29 pm</span>
+          <button class="like-btn">👍 Like</button>
+        </div>
+      </div>
+      <div class="likes-row">
+        <span class="emoji">😊</span>
+        <span class="names">11 people</span>
+        <span>liked this</span>
+      </div>
+    </div>
+
+    <!-- Assignment Card -->
+    <div class="feed-card assignment-card">
+      <div class="card-header">
+        <div class="poster-avatar blue">TR</div>
+        <div class="poster-info">
+          <div class="poster-name">Thomas Rivera</div>
+          <div class="poster-route">
+            <span class="arrow">▶</span>
+            <span class="course-link">English 7 – Period 3</span>
+          </div>
+        </div>
+        <button class="card-action">⧉</button>
+      </div>
+      <div class="card-body">
+        <div class="assignment-label">📝 Assignment</div>
+        <div class="assignment-title">HW – Finish watching the video started in class on introductory paragraphs. DUE: Day 2</div>
+        <div class="assignment-desc">
+          Continue reviewing the clip from today's lesson and take notes on the three key elements discussed. Be ready for a short discussion next class.
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="timestamp">Yesterday at 1:12 pm</span>
+          <button class="like-btn">👍 Like</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Another Announcement -->
+    <div class="feed-card">
+      <div class="card-header">
+        <div class="poster-avatar orange">JK</div>
+        <div class="poster-info">
+          <div class="poster-name">Julia Kwan</div>
+          <div class="poster-route">
+            <span class="arrow">▶</span>
+            <span class="course-link">Japanese 1A</span>
+          </div>
+        </div>
+        <button class="card-action">⧉</button>
+      </div>
+      <div class="card-body">
+        <div class="card-message" style="text-align:left;font-family:inherit;font-size:13px;font-weight:400;color:#333;">
+          Don't forget — the campus scavenger hunt is tomorrow! Pairs were assigned last week. Meet by the main entrance at 8:45 AM.
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="timestamp">Today at 10:05 am</span>
+          <button class="like-btn">👍 Like</button>
+        </div>
+      </div>
+      <div class="likes-row">
+        <span class="emoji">🎉</span>
+        <span class="names">6 people</span>
+        <span>liked this</span>
+      </div>
+    </div>
+
+  </div><!-- /feed-col -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- To Do -->
+    <div class="sidebar-card">
+      <div class="sidebar-section-title">To Do</div>
+
+      <div class="todo-group-label overdue">OVERDUE</div>
+
+      <div class="todo-item">
+        <div class="todo-icon green">SS</div>
+        <div class="todo-content">
+          <div class="todo-title">Maya/Aztec/Inca One-Pager Research Notes</div>
+          <div class="todo-due">Due earlier today</div>
+          <div class="todo-course">Social Studies 7</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon overdue">!</div>
+        </div>
+      </div>
+
+      <div class="todo-group-label">UPCOMING</div>
+
+      <div class="todo-item">
+        <div class="todo-icon blue">EN</div>
+        <div class="todo-content">
+          <div class="todo-title">HW – Finish watching the video on introductory paragraphs. DUE: Day 2</div>
+          <div class="todo-due">Due Wed, Mar 18 at 11:59 pm</div>
+          <div class="todo-course">English 7</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon upcoming">○</div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="todo-icon purple">JP</div>
+        <div class="todo-content">
+          <div class="todo-title">Campus Scavenger Hunt</div>
+          <div class="todo-due">Due Wed, Mar 18 at 11:59 pm</div>
+          <div class="todo-course">Japanese 1A</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon upcoming">○</div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="todo-icon green">SS</div>
+        <div class="todo-content">
+          <div class="todo-title">Maya/Aztec/Inca One-Pager</div>
+          <div class="todo-due">Due Thu, Mar 19 at 3:15 pm</div>
+          <div class="todo-course">Social Studies 7</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon upcoming">○</div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="todo-icon purple">JP</div>
+        <div class="todo-content">
+          <div class="todo-title">Time Expression Assessment</div>
+          <div class="todo-due">Due Fri, Mar 20 at 11:59 pm</div>
+          <div class="todo-course">Japanese 1A</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon upcoming">○</div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="todo-icon green">SS</div>
+        <div class="todo-content">
+          <div class="todo-title">Maya/Aztec/Inca Unit Assessment</div>
+          <div class="todo-due">Due Tue, Mar 24 at 11:59 pm</div>
+          <div class="todo-course">Social Studies 7</div>
+        </div>
+        <div class="todo-status">
+          <div class="status-icon upcoming">○</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">
+        <span class="title">Upcoming Events</span>
+        <span class="calendar-link">Calendar</span>
+      </div>
+
+      <div class="event-date-header">FRIDAY, MAY 15, 2026</div>
+
+      <div class="event-item">
+        <div class="event-icon">📅</div>
+        <div class="event-title">Spring Dance</div>
+      </div>
+
+      <div class="event-date-header">TUESDAY, JUNE 2, 2026</div>
+
+      <div class="event-item">
+        <div class="event-icon">📅</div>
+        <div class="event-title">End of Year Celebration</div>
+      </div>
+
+      <div class="event-date-header">FRIDAY, JUNE 5, 2026</div>
+
+      <div class="event-item" style="border-bottom:none;">
+        <div class="event-icon">📅</div>
+        <div class="event-title">Last Day of School</div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /main-layout -->
+
+</body>
+</html>
